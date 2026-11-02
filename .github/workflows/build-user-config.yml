@@ -1,0 +1,19 @@
+# ZMK firmware build, using the zmkfirmware reusable workflow pinned to the
+# same ZMK revision as config/west.yml. The build matrix lives in build.yaml
+# at the repository root.
+name: Build firmware
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    uses: zmkfirmware/zmk/.github/workflows/build-user-config.yml@edf5c0814fd3ea202e43aad2d68fd32e882a518c
+    with:
+      build_matrix_path: build.yaml
+      config_path: config

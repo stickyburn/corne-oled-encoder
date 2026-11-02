@@ -1,0 +1,31 @@
+/*
+ * Corne Choc Pro - left half (central side).
+ *
+ * The middle key positions of this half are not fitted and no rotary
+ * encoders are installed on it, so all four EC11 sensor nodes are
+ * disabled here:
+ *
+ *   - left_ex1_encoder / left_ex2_encoder: not fitted on this half
+ *   - right_ex1_encoder / right_ex2_encoder: remote encoders that belong
+ *     to the right half (already disabled in the shared board files,
+ *     restated here for clarity)
+ *
+ * The board's keymap sensor list keeps all four entries; with the sensor
+ * nodes disabled only the right half's lower encoder reports rotation.
+ */
+
+&left_ex1_encoder {
+    status = "disabled";
+};
+
+&left_ex2_encoder {
+    status = "disabled";
+};
+
+&right_ex1_encoder {
+    status = "disabled";
+};
+
+&right_ex2_encoder {
+    status = "disabled";
+};
