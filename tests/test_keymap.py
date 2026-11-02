@@ -4,6 +4,7 @@ Plain-text parsing only (no third-party dependencies). The original 42
 bindings per layer are loaded from tests/fixtures/original_bindings.json,
 which was extracted verbatim from the previous corne-config-zmk keymap
 (config/corne.keymap) and is checked in as the baseline.
+Only two original &none slots are intentionally extended for RGB controls.
 
 The Corne Choc Pro inserts four middle keys into the original Corne layout
 (rows 0 and 1 each gain two keys between the halves):
@@ -29,6 +30,10 @@ FIXTURE_PATH = Path(__file__).resolve().parent / "fixtures" / "original_bindings
 ORIGINAL_LAYERS = ["default_layer", "system", "symbols", "brackets"]
 LAYER_ORDER = ORIGINAL_LAYERS + ["maintenance"]
 POSITION_COUNT = 46
+
+# User-requested lighting controls replace only previously unused positions
+# in the original System layer. Keep the original fixture unchanged.
+SYSTEM_LIGHTING = {5: "&rgb_ug RGB_TOG", 17: "&rgb_ug RGB_EFF"}
 
 # Keymap indices of the four inserted middle positions (rows 0/1, cols 6/7).
 EXTRA_LEFT_TOP = 6  # not fitted on this build
@@ -70,7 +75,6 @@ MAINTENANCE_SPECIALS = {
     1: "&sys_reset",  # Q
     2: "&bootloader",  # W
     3: "&studio_unlock",  # F
-    4: "&rgb_ug RGB_TOG",  # P
     5: "&bt BT_SEL 4",  # G
     15: "&out OUT_USB",  # A
     16: "&out OUT_BLE",  # R
@@ -169,7 +173,7 @@ class TestLayerStructure(KeymapTestCase):
 
 
 class TestOriginalBindingsPreserved(KeymapTestCase):
-    def test_all_42_original_bindings_are_verbatim(self):
+    def test_original_bindings_preserved_except_requested_lighting_additions(self):
         fixture = json.loads(FIXTURE_PATH.read_text())
         self.assertEqual(sorted(fixture), sorted(ORIGINAL_LAYERS))
         for layer in ORIGINAL_LAYERS:
@@ -177,8 +181,15 @@ class TestOriginalBindingsPreserved(KeymapTestCase):
             self.assertEqual(len(original), 42, layer)
             current = self.bindings[layer]
             for old_index, binding in enumerate(original):
-                self.assertEqual(current[new_index_for_old(old_index)], binding,
+                expected = SYSTEM_LIGHTING.get(old_index, binding) if layer == "system" else binding
+                self.assertEqual(current[new_index_for_old(old_index)], expected,
                                  "%s: original position %d" % (layer, old_index))
+
+    def test_lighting_controls_only_replace_unused_system_positions(self):
+        original = json.loads(FIXTURE_PATH.read_text())["system"]
+        for old_index, binding in SYSTEM_LIGHTING.items():
+            self.assertEqual(original[old_index], "&none")
+            self.assertEqual(self.bindings["system"][new_index_for_old(old_index)], binding)
 
     def test_inserted_extras_per_layer(self):
         for layer in ORIGINAL_LAYERS:

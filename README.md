@@ -9,16 +9,17 @@ Corne.** Those boards use different hardware definitions and firmware.
 
 ## Your layout, preserved
 
-All 42 original key positions on each of the four original layers are ported
-unchanged from
+The original key positions and functions on all four layers are ported from
 [`stickyburn/corne-config-zmk` at `559dd24`](https://github.com/stickyburn/corne-config-zmk/tree/559dd24e8be863bfb6e5eb777f6d7c57daafb828).
+Two formerly unused System-layer positions now control RGB: **G toggles
+on/off; D cycles lighting modes**. No original function was replaced.
 Keebart's four extra matrix positions are inserted between the halves on the
 top two rows; the two covered by the left display are disabled.
 
 | Layer | Access from Colemak | Contents |
 | --- | --- | --- |
 | 0 Colemak | Default | Your Colemak, autoshift, and thumb bindings |
-| 1 System | Hold outer bottom-right key | Bluetooth profiles 0–3, output toggle, F-keys, brightness and volume |
+| 1 System | Hold outer bottom-right key | Bluetooth profiles 0–3, output toggle, F-keys, brightness, volume and RGB |
 | 2 Symbols | Hold right Space thumb | Numbers, symbols and navigation |
 | 3 Brackets | Hold outer right thumb | Numbers, paired brackets and navigation |
 | 4 Maintenance | Hold extra play/pause key + outer right thumb together | Reboot, bootloader, Studio unlock and other setup controls |
@@ -40,7 +41,30 @@ Keebart's default volume mapping and must be confirmed on the physical board.
 If turning clockwise lowers volume, swap its two keycodes in `sensor-bindings`.
 The firmware keeps the vendor's four sensor slots; unused slots are harmless.
 
-### Maintenance layer
+### Lighting — two keybinds
+
+Hold your usual **System-layer key** (the outer bottom-right non-thumb key):
+
+- Tap **G** on the left: RGB on/off.
+- Tap **D** on the left: next lighting mode.
+
+The modes cycle **solid → breathing → color cycling → rainbow swirl** and
+repeat. RGB defaults to **on with rainbow swirl** on both halves. Solid and
+breathing use blue as their default hue; rainbow/color-cycling cover the hue
+range automatically. RGB turns off after five minutes idle and returns on
+activity. Expect substantially shorter wireless battery life with LEDs on.
+
+RGB choices are saved after about a minute and survive restarts/flashes.
+Saved settings override compiled defaults: if an older setting persists,
+toggle on with System+G and cycle with System+D to rainbow; no full reset is
+needed. These controls act on both halves. No new RGB combo is required.
+
+The left Sharp MiP LCD has no software brightness/contrast control. Its
+driver returns unsupported for both operations; perceived contrast can depend
+on lighting and viewing angle. A display that still looks washed out should
+be investigated rather than "fixed" with an unrelated brightness setting.
+
+### Maintenance layer (recovery/setup only)
 
 Press the **extra play/pause key and outer right thumb within 50 ms**, then
 keep both held. Press one of these physical Colemak positions on the left:
@@ -50,7 +74,6 @@ keep both held. Press one of these physical Colemak positions on the left:
 | Q | Reboot the left/central half; does not erase settings |
 | W | Enter the left half's USB bootloader; does not erase settings |
 | F | Unlock ZMK Studio |
-| P | Toggle RGB |
 | G | Select Bluetooth profile 4 (the fifth host slot) |
 | A | Prefer USB output |
 | R | Prefer Bluetooth output |
@@ -76,6 +99,20 @@ Download the successful run's **firmware** artifact and extract it. It contains:
 Do not mix files from different builds, swap sides, or use the old nice!nano
 UF2 files. Locally downloaded binaries live under ignored `firmware/`, not in
 source control. Regression checks: `python3 -m unittest discover -s tests -v`.
+
+Initial verification (2026-11-02): **35 source checks passed** and
+[all four firmware builds passed at `4303d09`](https://github.com/stickyburn/corne-oled-encoder/actions/runs/41464608580).
+The build logs confirm the custom keymap and per-half overlays, left display
+and WPM graph, right display disabled, and both reset images with Studio
+disabled. All four downloaded UF2s were checked for the nRF52840 family and
+application-only flash addresses. In Keymap Editor's Clipboard mode, the
+actual source/JSON loaded successfully with 46 keys, all five layers, sensor
+bindings and the maintenance combo. This checks editor parsing/rendering, not
+GitHub OAuth authorization or physical keyboard behavior.
+
+The original-binding fixture intentionally detects layout changes. If you
+later change those keys deliberately, update the corresponding test fixture;
+a successful source test is not a replacement for compiling and testing keys.
 
 ## First installation — Linux or macOS
 
@@ -179,8 +216,8 @@ Miryoku is an alternative compact keymap **on top of ZMK**, not smaller ZMK
 firmware. Choosing it would replace your layout, so this port does not use it.
 
 Power policy: 30-minute deep sleep, left display/typing graph enabled, no
-right display, RGB defaulting to off with a maintenance toggle (a previously
-saved RGB state can survive flashing). This preserves
+right display, RGB defaulting to on with rainbow swirl (previously saved
+RGB settings can survive flashing), and automatic RGB off while idle. This preserves
 your original sleep interval without carrying over the old board's forced
 maximum Bluetooth transmit power.
 

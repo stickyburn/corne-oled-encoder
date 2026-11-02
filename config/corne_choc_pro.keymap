@@ -1,8 +1,9 @@
 /*
  * Keymap for the Keebart Corne Choc Pro BT (46-position layout).
  *
- * Ported from the previous corne-config-zmk configuration: all 42 original
- * bindings of the four original layers are preserved verbatim. The four
+ * Ported from the previous corne-config-zmk configuration: all original
+ * functions are preserved. Two formerly unused System-layer positions add
+ * RGB toggle (G) and effect cycling (D). The four
  * additional middle positions of the Corne Choc Pro are inserted at rows 0
  * and 1, columns 6 and 7 (keymap indices 6, 7, 20 and 21):
  *
@@ -87,13 +88,13 @@
         system {
             display-name = "System";
             // --------------------------------------------------------------------------------
-            // | F8  |  F1 |  F2 |  F3 |  F4 |none | none |trans |none |none |none |none | F2  | F8  |
-            // | OUT |none |none |none |none |none | none |trans |none |trans| BRI+| BRI-|MIN  |none |
+            // | F8  |  F1 |  F2 |  F3 |  F4 |RGB  | none |trans |none |none |none |none | F2  | F8  |
+            // | OUT |none |none |none |none |MODE | none |trans |none |trans| BRI+| BRI-|MIN  |none |
             // | BTCLR|BT0 | BT1 | BT2 | BT3 |none |               |none | VOL+| VOL-| MUTE|none |none |
             //                     |trans|trans|trans|  |trans|trans|trans|
             bindings = <
- &kp F8        &kp F1        &kp F2        &kp F3        &kp F4        &none           &none              &trans              &none         &none         &none         &none                &kp F2         &kp F8
- &out OUT_TOG  &none         &none         &none         &none         &none           &none              &trans              &none         &trans        &kp C_BRIGHTNESS_INC  &kp C_BRIGHTNESS_DEC  &kp C_BRI_MIN  &none
+ &kp F8        &kp F1        &kp F2        &kp F3        &kp F4        &rgb_ug RGB_TOG &none              &trans              &none         &none         &none         &none                &kp F2         &kp F8
+ &out OUT_TOG  &none         &none         &none         &none         &rgb_ug RGB_EFF &none              &trans              &none         &trans        &kp C_BRIGHTNESS_INC  &kp C_BRIGHTNESS_DEC  &kp C_BRI_MIN  &none
  &bt BT_CLR    &bt BT_SEL 0  &bt BT_SEL 1  &bt BT_SEL 2  &bt BT_SEL 3  &none           &none               &none              &kp C_VOLUME_UP   &kp C_VOLUME_DOWN  &kp K_MUTE     &none
                                            &trans        &trans        &trans    &trans  &trans  &trans
             >;
@@ -140,12 +141,12 @@
             // transparent.
             //
             // --------------------------------------------------------------------------------
-            // |trans|RESET|BOOT |UNLOCK|RGB_T|BT5  |trans|trans|trans|trans|trans|trans|trans|trans|
+            // |trans|RESET|BOOT |UNLOCK|trans|BT5  |trans|trans|trans|trans|trans|trans|trans|trans|
             // |trans|USB  | BLE | none |trans|trans|trans|trans|trans|trans|trans|trans|trans|trans|
             // |trans|trans|trans|trans|trans|trans|               |trans|trans|trans|trans|trans|trans|
             //                     |trans|trans|trans|  |trans|trans|trans|
             bindings = <
- &trans        &sys_reset    &bootloader   &studio_unlock  &rgb_ug RGB_TOG  &bt BT_SEL 4     &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans
+ &trans        &sys_reset    &bootloader   &studio_unlock  &trans           &bt BT_SEL 4     &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans
  &trans        &out OUT_USB  &out OUT_BLE  &none           &trans           &trans           &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans
  &trans        &trans        &trans        &trans          &trans           &trans                             &trans  &trans  &trans  &trans  &trans  &trans
                                            &trans          &trans           &trans  &trans  &trans  &trans
