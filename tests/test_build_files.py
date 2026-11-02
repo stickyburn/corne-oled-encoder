@@ -113,7 +113,7 @@ class TestBuildMatrix(unittest.TestCase):
             self.assertEqual(len(reset), 1, board)
             entry = reset[0]
             self.assertEqual(entry["cmake-args"],
-                             "-DZMK_CONFIG=${GITHUB_WORKSPACE}/config/reset")
+                             "-DZMK_CONFIG=${GITHUB_WORKSPACE}/config/reset -DCONFIG_ZMK_STUDIO=n")
             self.assertNotIn("snippet", entry)
             self.assertEqual(entry["artifact-name"], artifact)
 

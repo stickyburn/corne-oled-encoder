@@ -26,10 +26,10 @@ include:
   # Settings reset, left half: minimal config, no display, no Studio.
   - board: corne_choc_pro_left
     shield: settings_reset
-    cmake-args: -DZMK_CONFIG=${GITHUB_WORKSPACE}/config/reset
+    cmake-args: -DZMK_CONFIG=${GITHUB_WORKSPACE}/config/reset -DCONFIG_ZMK_STUDIO=n
     artifact-name: settings-reset-left
   # Settings reset, right half: minimal config, no display, no Studio.
   - board: corne_choc_pro_right
     shield: settings_reset
-    cmake-args: -DZMK_CONFIG=${GITHUB_WORKSPACE}/config/reset
+    cmake-args: -DZMK_CONFIG=${GITHUB_WORKSPACE}/config/reset -DCONFIG_ZMK_STUDIO=n
     artifact-name: settings-reset-right
