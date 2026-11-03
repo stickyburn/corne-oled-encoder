@@ -1,6 +1,3 @@
-# ZMK firmware build, using the zmkfirmware reusable workflow pinned to the
-# same ZMK revision as config/west.yml. The build matrix lives in build.yaml
-# at the repository root.
 name: Build firmware
 
 on:

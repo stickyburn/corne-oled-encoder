@@ -4,8 +4,6 @@ manifest:
       url: https://github.com/zmkfirmware/zmk
       revision: edf5c0814fd3ea202e43aad2d68fd32e882a518c
       import: app/west.yml
-    # Keebart vendor module: supplies the corne_choc_pro_left/right boards
-    # and the sharp_mip display shield. No west import of its own.
     - name: keebart-zmk-config
       url: https://github.com/Keebart/zmk-config
       revision: 98c5a1181ff7db1f480f684f714126922d55b8f0

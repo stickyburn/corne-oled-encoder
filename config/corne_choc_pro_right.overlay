@@ -1,18 +1,4 @@
-/*
- * Corne Choc Pro - right half (peripheral side).
- *
- * Only the lower-right encoder is fitted on this half:
- *
- *   - left_ex1_encoder / left_ex2_encoder: phantom encoders, wired to the
- *     left half (already disabled in the shared board files, restated
- *     here for clarity)
- *   - right_ex1_encoder: the top-middle position is populated with a
- *     regular key, not an encoder
- *   - right_ex2_encoder: the fitted lower encoder (rotation + push)
- *
- * The board's keymap sensor list keeps all four entries; with the other
- * sensor nodes disabled, only right_ex2 reports rotation.
- */
+/* Only the lower-right encoder is fitted. */
 
 &left_ex1_encoder {
     status = "disabled";
