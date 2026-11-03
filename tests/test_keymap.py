@@ -4,7 +4,8 @@ Plain-text parsing only (no third-party dependencies). The original 42
 bindings per layer are loaded from tests/fixtures/original_bindings.json,
 which was extracted verbatim from the previous corne-config-zmk keymap
 (config/corne.keymap) and is checked in as the baseline.
-Only two original &none slots are intentionally extended for RGB controls.
+System-layer overrides explicitly cover the requested RGB controls, fifth
+Bluetooth profile and separate USB/Bluetooth output selection.
 
 The Corne Choc Pro inserts four middle keys into the original Corne layout
 (rows 0 and 1 each gain two keys between the halves):
@@ -34,6 +35,12 @@ POSITION_COUNT = 46
 # User-requested lighting controls replace only previously unused positions
 # in the original System layer. Keep the original fixture unchanged.
 SYSTEM_LIGHTING = {5: "&rgb_ug RGB_TOG", 17: "&rgb_ug RGB_EFF"}
+SYSTEM_OVERRIDES = {
+    **SYSTEM_LIGHTING,
+    12: "&out OUT_USB",  # Left Alt
+    13: "&out OUT_BLE",  # A
+    29: "&bt BT_SEL 4",  # B, after Z/X/C/V
+}
 
 # Keymap indices of the four inserted middle positions (rows 0/1, cols 6/7).
 EXTRA_LEFT_TOP = 6  # not fitted on this build
@@ -68,17 +75,15 @@ EXTRA_BINDINGS = {
     },
 }
 
-# Maintenance layer: left-half positions only; "letter" comments refer to
-# the default-layer binding at the same position. Everything else,
+# Maintenance layer: reset behaviors target their physical source half;
+# "letter" comments refer to the default binding at the same position. Everything else,
 # including the two combo keys (7 and 45), is transparent.
 MAINTENANCE_SPECIALS = {
     1: "&sys_reset",  # Q
     2: "&bootloader",  # W
     3: "&studio_unlock",  # F
-    5: "&bt BT_SEL 4",  # G
-    15: "&out OUT_USB",  # A
-    16: "&out OUT_BLE",  # R
-    17: "&none",  # S
+    8: "&sys_reset",  # J, right half
+    9: "&bootloader",  # L, right half
 }
 
 SENSOR_BINDING = "&inc_dec_kp C_VOL_DN C_VOL_UP"
@@ -173,7 +178,7 @@ class TestLayerStructure(KeymapTestCase):
 
 
 class TestOriginalBindingsPreserved(KeymapTestCase):
-    def test_original_bindings_preserved_except_requested_lighting_additions(self):
+    def test_original_bindings_preserved_except_requested_system_changes(self):
         fixture = json.loads(FIXTURE_PATH.read_text())
         self.assertEqual(sorted(fixture), sorted(ORIGINAL_LAYERS))
         for layer in ORIGINAL_LAYERS:
@@ -181,7 +186,7 @@ class TestOriginalBindingsPreserved(KeymapTestCase):
             self.assertEqual(len(original), 42, layer)
             current = self.bindings[layer]
             for old_index, binding in enumerate(original):
-                expected = SYSTEM_LIGHTING.get(old_index, binding) if layer == "system" else binding
+                expected = SYSTEM_OVERRIDES.get(old_index, binding) if layer == "system" else binding
                 self.assertEqual(current[new_index_for_old(old_index)], expected,
                                  "%s: original position %d" % (layer, old_index))
 
@@ -211,6 +216,34 @@ class TestMaintenanceLayer(KeymapTestCase):
         # thumb) form the combo that opens this layer.
         self.assertEqual(self.bindings["maintenance"][7], "&trans")
         self.assertEqual(self.bindings["maintenance"][45], "&trans")
+
+    def test_no_device_output_or_lighting_controls(self):
+        for binding in self.bindings["maintenance"]:
+            self.assertNotRegex(binding, r"^&(bt|out|rgb_ug)\b")
+
+    def test_recovery_keys_are_on_the_target_halves(self):
+        hardware = json.loads((REPO_ROOT / "config" / "corne_choc_pro.json").read_text())
+        layout = hardware["layouts"]["default_layout"]["layout"]
+        for position, behavior in ((1, "&sys_reset"), (2, "&bootloader"),
+                                   (8, "&sys_reset"), (9, "&bootloader")):
+            self.assertEqual(self.bindings["maintenance"][position], behavior)
+            self.assertEqual(layout[position]["row"], 0)
+            if position in (1, 2):
+                self.assertLess(layout[position]["col"], 7)
+            else:
+                self.assertGreaterEqual(layout[position]["col"], 7)
+
+
+class TestSystemControls(KeymapTestCase):
+    def test_five_bluetooth_profiles_on_z_x_c_v_b(self):
+        self.assertEqual(self.bindings["system"][29:34],
+                         ["&bt BT_SEL %d" % profile for profile in range(5)])
+        self.assertEqual(self.bindings["system"][28], "&bt BT_CLR")
+
+    def test_alt_prefers_usb_and_a_prefers_bluetooth(self):
+        self.assertEqual(self.bindings["system"][14], "&out OUT_USB")
+        self.assertEqual(self.bindings["system"][15], "&out OUT_BLE")
+        self.assertNotIn("&out OUT_TOG", self.bindings["system"])
 
 
 class TestMaintenanceCombo(KeymapTestCase):

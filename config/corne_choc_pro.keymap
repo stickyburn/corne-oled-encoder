@@ -1,9 +1,9 @@
 /*
  * Keymap for the Keebart Corne Choc Pro BT (46-position layout).
  *
- * Ported from the previous corne-config-zmk configuration: all original
- * functions are preserved. Two formerly unused System-layer positions add
- * RGB toggle (G) and effect cycling (D). The four
+ * Ported from the previous corne-config-zmk configuration: Colemak, Symbols
+ * and Brackets are unchanged. System adds RGB controls, all five Bluetooth
+ * profiles and explicit USB/Bluetooth output selection. The four
  * additional middle positions of the Corne Choc Pro are inserted at rows 0
  * and 1, columns 6 and 7 (keymap indices 6, 7, 20 and 21):
  *
@@ -19,8 +19,8 @@
  *
  * A fifth layer (maintenance) is reachable only by holding the combo of the
  * top-right middle key (position 7) and the outer right thumb key
- * (position 45) on the default layer. Its keys sit on left-half positions
- * so they stay reachable while the right hand holds the combo.
+ * (position 45) on the default layer. Q/W reboot/bootload the left half;
+ * J/L reboot/bootload the right. ZMK targets the physical key's source half.
  *
  * Copyright (c) 2020 The ZMK Contributors
  *
@@ -89,13 +89,13 @@
             display-name = "System";
             // --------------------------------------------------------------------------------
             // | F8  |  F1 |  F2 |  F3 |  F4 |RGB  | none |trans |none |none |none |none | F2  | F8  |
-            // | OUT |none |none |none |none |MODE | none |trans |none |trans| BRI+| BRI-|MIN  |none |
-            // | BTCLR|BT0 | BT1 | BT2 | BT3 |none |               |none | VOL+| VOL-| MUTE|none |none |
+            // | USB | BLE |none |none |none |MODE | none |trans |none |trans| BRI+| BRI-|MIN  |none |
+            // | BTCLR|BT0 | BT1 | BT2 | BT3 | BT4 |               |none |none | VOL+| VOL-|MUTE |none |
             //                     |trans|trans|trans|  |trans|trans|trans|
             bindings = <
  &kp F8        &kp F1        &kp F2        &kp F3        &kp F4        &rgb_ug RGB_TOG &none              &trans              &none         &none         &none         &none                &kp F2         &kp F8
- &out OUT_TOG  &none         &none         &none         &none         &rgb_ug RGB_EFF &none              &trans              &none         &trans        &kp C_BRIGHTNESS_INC  &kp C_BRIGHTNESS_DEC  &kp C_BRI_MIN  &none
- &bt BT_CLR    &bt BT_SEL 0  &bt BT_SEL 1  &bt BT_SEL 2  &bt BT_SEL 3  &none           &none               &none              &kp C_VOLUME_UP   &kp C_VOLUME_DOWN  &kp K_MUTE     &none
+ &out OUT_USB  &out OUT_BLE  &none         &none         &none         &rgb_ug RGB_EFF &none              &trans              &none         &trans        &kp C_BRIGHTNESS_INC  &kp C_BRIGHTNESS_DEC  &kp C_BRI_MIN  &none
+ &bt BT_CLR    &bt BT_SEL 0  &bt BT_SEL 1  &bt BT_SEL 2  &bt BT_SEL 3  &bt BT_SEL 4   &none               &none              &kp C_VOLUME_UP   &kp C_VOLUME_DOWN  &kp K_MUTE     &none
                                            &trans        &trans        &trans    &trans  &trans  &trans
             >;
             sensor-bindings = <&inc_dec_kp C_VOL_DN C_VOL_UP &inc_dec_kp C_VOL_DN C_VOL_UP &inc_dec_kp C_VOL_DN C_VOL_UP &inc_dec_kp C_VOL_DN C_VOL_UP>;
@@ -135,19 +135,19 @@
 
         maintenance {
             display-name = "Maintenance";
-            // Maintenance layer, held via the pos 7 + pos 45 combo. Keys sit on
-            // left-half positions (reachable while the right hand holds the
-            // combo); everything else, including the two combo keys, is
-            // transparent.
+            // Maintenance layer, held via the pos 7 + pos 45 combo.
+            // Reset behaviors use event-source locality: Q/W target left,
+            // J/L target right. Both halves must be connected for right-side
+            // bindings. The combo keys themselves stay transparent.
             //
             // --------------------------------------------------------------------------------
-            // |trans|RESET|BOOT |UNLOCK|trans|BT5  |trans|trans|trans|trans|trans|trans|trans|trans|
-            // |trans|USB  | BLE | none |trans|trans|trans|trans|trans|trans|trans|trans|trans|trans|
+            // |trans|RST-L|BOOT-L|UNLOCK|trans|trans|trans|trans|RST-R|BOOT-R|trans|trans|trans|trans|
+            // |trans|trans|trans|trans |trans|trans|trans|trans|trans|trans|trans|trans|trans|trans|
             // |trans|trans|trans|trans|trans|trans|               |trans|trans|trans|trans|trans|trans|
             //                     |trans|trans|trans|  |trans|trans|trans|
             bindings = <
- &trans        &sys_reset    &bootloader   &studio_unlock  &trans           &bt BT_SEL 4     &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans
- &trans        &out OUT_USB  &out OUT_BLE  &none           &trans           &trans           &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans
+ &trans        &sys_reset    &bootloader   &studio_unlock  &trans           &trans           &trans  &trans  &sys_reset  &bootloader  &trans  &trans  &trans  &trans
+ &trans        &trans        &trans        &trans          &trans           &trans           &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans
  &trans        &trans        &trans        &trans          &trans           &trans                             &trans  &trans  &trans  &trans  &trans  &trans
                                            &trans          &trans           &trans  &trans  &trans  &trans
             >;

@@ -11,15 +11,17 @@ Corne.** Those boards use different hardware definitions and firmware.
 
 The original key positions and functions on all four layers are ported from
 [`stickyburn/corne-config-zmk` at `559dd24`](https://github.com/stickyburn/corne-config-zmk/tree/559dd24e8be863bfb6e5eb777f6d7c57daafb828).
-Two formerly unused System-layer positions now control RGB: **G toggles
-on/off; D cycles lighting modes**. No original function was replaced.
+System now groups all five Bluetooth profiles on **Z/X/C/V/B**, with explicit
+output preference on **Left Alt (USB) / A (Bluetooth)**. Two formerly unused
+positions control RGB: **G toggles on/off; D cycles lighting modes**.
+Colemak, Symbols and Brackets retain their original bindings.
 Keebart's four extra matrix positions are inserted between the halves on the
 top two rows; the two covered by the left display are disabled.
 
 | Layer | Access from Colemak | Contents |
 | --- | --- | --- |
 | 0 Colemak | Default | Your Colemak, autoshift, and thumb bindings |
-| 1 System | Hold outer bottom-right key | Bluetooth profiles 0–3, output toggle, F-keys, brightness, volume and RGB |
+| 1 System | Hold outer bottom-right key | Bluetooth profiles 0–4, USB/Bluetooth preference, F-keys, brightness, volume and RGB |
 | 2 Symbols | Hold right Space thumb | Numbers, symbols and navigation |
 | 3 Brackets | Hold outer right thumb | Numbers, paired brackets and navigation |
 | 4 Maintenance | Hold extra play/pause key + outer right thumb together | Reboot, bootloader, Studio unlock and other setup controls |
@@ -64,24 +66,43 @@ driver returns unsupported for both operations; perceived contrast can depend
 on lighting and viewing angle. A display that still looks washed out should
 be investigated rather than "fixed" with an unrelated brightness setting.
 
+### Devices and output
+
+Hold the same **System-layer key** and use these normal Colemak positions:
+
+| Key | Action |
+| --- | --- |
+| Z / X / C / V / B | Select Bluetooth profile 0 / 1 / 2 / 3 / 4 |
+| Left Shift | Clear the selected host pairing, not all settings |
+| Left Alt | Prefer USB output |
+| A | Prefer Bluetooth output |
+
+Selecting a Bluetooth profile chooses the host slot; output preference chooses
+whether typing goes over USB or Bluetooth when those connections are available.
+For example, use System+A to type over Bluetooth while the USB cable charges
+the keyboard. These bindings do not change normal-layer Alt or A.
+
 ### Maintenance layer (recovery/setup only)
 
 Press the **extra play/pause key and outer right thumb within 50 ms**, then
-keep both held. Press one of these physical Colemak positions on the left:
+keep both held. Press one of these physical Colemak positions:
 
 | Key position | Action |
 | --- | --- |
 | Q | Reboot the left/central half; does not erase settings |
 | W | Enter the left half's USB bootloader; does not erase settings |
 | F | Unlock ZMK Studio |
-| G | Select Bluetooth profile 4 (the fifth host slot) |
-| A | Prefer USB output |
-| R | Prefer Bluetooth output |
+| J | Reboot the right half; does not erase settings |
+| L | Enter the right half's USB bootloader; does not erase settings |
 
-Release the combo to leave Maintenance. Use the physical double-reset button
-to enter the **right** half's bootloader; the central bootloader binding is
-not a remote right-half flasher. A destructive full settings wipe is
-deliberately **not** assigned to a normal key.
+Release the combo to leave Maintenance. Reset/bootloader behaviors target
+the half containing the **physical key you press**: Q/W are on the left,
+J/L on the right. The halves must be paired and connected for the right-side
+bindings to work. Plug USB into the half you are flashing, and use its matching
+UF2. If the halves cannot communicate, use that half's physical double-reset
+button instead. No custom driver is needed; this is
+[native ZMK behavior](https://github.com/zmkfirmware/zmk/blob/edf5c0814fd3ea202e43aad2d68fd32e882a518c/docs/docs/keymaps/behaviors/reset.md).
+A destructive full settings wipe is deliberately **not** assigned to a key.
 
 ## Build and download
 
