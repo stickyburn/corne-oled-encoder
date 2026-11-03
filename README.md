@@ -9,6 +9,7 @@ rotary encoder and a regular key above it.
 - Encoder rotation: volume. Encoder press: mute.
 - Key above encoder: play/pause.
 - RGB: on by default, rainbow swirl.
+- RGB off and deep sleep after 10 minutes idle; USB power prevents deep sleep.
 
 ## Colemak layout
 
