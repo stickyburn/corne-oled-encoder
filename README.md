@@ -10,6 +10,7 @@ rotary encoder and a regular key above it.
 - Key above encoder: play/pause.
 - RGB: on by default, rainbow swirl.
 - RGB off and deep sleep after 10 minutes idle; USB power prevents deep sleep.
+- Display: static spacetime well, left battery, host link, profile 1–5 and WPM graph.
 
 ## Colemak layout
 
