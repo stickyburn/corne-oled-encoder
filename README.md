@@ -1,5 +1,6 @@
-# Corne
+# Corne wireless
 
-- Colemak layout
-- Sharp MiP LCD
-- Rotary encoder
+- Colemak
+- Left side sharp MiP display
+- Right side rotary encoder
+- 4 layers
